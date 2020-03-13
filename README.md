@@ -11,5 +11,5 @@
 ## Components
 
 - Container manager
-- Pull manager (webhooks configuration) 
-- OPTIONAL - Push based update implementation
+- Push manager (webhooks configuration) 
+- OPTIONAL - Pull based update implementation
