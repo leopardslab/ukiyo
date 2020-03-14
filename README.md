@@ -13,3 +13,14 @@
 - Container manager
 - Push manager (webhooks configuration) 
 - OPTIONAL - Pull based update implementation
+
+## Execution modes
+
+Two modes of execution
+
+- As a container running alongside other containers (Should mount docker.sock to run docker commands inside the ukiyo docker container)
+- As a standalone executable
+
+## Language
+
+- Go lang
