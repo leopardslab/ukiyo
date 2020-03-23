@@ -24,3 +24,7 @@ Two modes of execution
 ## Language
 
 - Go lang
+
+### Go style guide
+
+- https://github.com/rajikaimal/go-styleguide
