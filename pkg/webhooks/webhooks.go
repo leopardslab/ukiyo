@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"ukiyo/pkg/pullmanager"
+	"ukiyo/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,53 +18,54 @@ type PushData struct {
 }
 
 type Repository struct {
-	Status           string `json:"status"`
-	Description      string `json:"description"`
-	Is_trusted       bool   `json:"is_trusted"`
-	Full_description string `json:"full_description"`
-	Repo_url         string `json:"repo_url"`
-	Owner            string `json:"owner"`
-	Is_official      bool   `json:"is_official"`
-	Is_private       bool   `json:"is_private"`
-	Name             string `json:"name"`
-	Namespace        string `json:"namespace"`
-	Star_count       int    `json:"star_count"`
-	Comment_count    int    `json:"comment_count"`
-	Date_created     int    `json:"date_created"`
-	Repo_name        string `json:"repo_name"`
+	Status          string `json:"status"`
+	Description     string `json:"description"`
+	IsTrusted       bool   `json:"is_trusted"`
+	FullDescription string `json:"full_description"`
+	RepoUrl         string `json:"repo_url"`
+	Owner           string `json:"owner"`
+	IsOfficial      bool   `json:"is_official"`
+	IsPrivate       bool   `json:"is_private"`
+	Name            string `json:"name"`
+	Namespace       string `json:"namespace"`
+	StarCount       int    `json:"star_count"`
+	CommentCount    int    `json:"comment_count"`
+	DateCreated     int    `json:"date_created"`
+	RepoName        string `json:"repo_name"`
 }
 
 type DockerWebHook struct {
-	PushData     PushData   `json:"push_data"`
-	Callback_url string     `json:"callback_url"`
-	Repository   Repository `json:"repository"`
+	PushData    PushData   `json:"push_data"`
+	CallbackUrl string     `json:"callback_url"`
+	Repository  Repository `json:"repository"`
 }
 
-func setupRouter() *gin.Engine {
-	r := gin.Default()
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
-
+func HooksListener(r *gin.Engine) {
 	r.POST("/ukiyo-web-hook", func(c *gin.Context) {
 		var dockerWebHook DockerWebHook
 		c.ShouldBindJSON(&dockerWebHook)
-		b, err := json.Marshal(dockerWebHook)
 
+		b, err := json.Marshal(dockerWebHook)
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		log.Println(string(b))
-		c.JSON(http.StatusOK, "foo")
-	})
 
-	return r
+		var pullObj util.PullObj
+		pullObj.Namespace = dockerWebHook.Repository.Namespace
+		pullObj.RepoName = dockerWebHook.Repository.RepoName
+		pullObj.Tag = dockerWebHook.PushData.Tag
+		pullObj.PushedDate = dockerWebHook.PushData.Pushed_at
+
+		pullmanager.PullToDocker(pullObj)
+
+		log.Println(string(b))
+		c.String(http.StatusOK, "OK")
+	})
 }
 
-func main() {
-	r := setupRouter()
-	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8080")
+func HealthCheck(r *gin.Engine) {
+	r.GET("/ping", func(c *gin.Context) {
+		c.String(http.StatusOK, "pong")
+	})
 }
