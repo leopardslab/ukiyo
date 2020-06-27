@@ -6,17 +6,16 @@ import (
 	"net/http"
 	"strconv"
 	"ukiyo/pkg/pullmanager"
-	//"ukiyo/pkg/pushmanager"
 	"ukiyo/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PushData struct {
-	Pushed_at int      `json:"pushed_at"`
-	images    []string `json:"images"`
-	Tag       string   `json:"tag"`
-	Pusher    string   `json:"pusher"`
+	PushedAt int      `json:"pushed_at"`
+	images   []string `json:"images"`
+	Tag      string   `json:"tag"`
+	Pusher   string   `json:"pusher"`
 }
 
 type Repository struct {
@@ -61,13 +60,12 @@ func HooksListener(r *gin.Engine) {
 		pullObj.Namespace = dockerWebHook.Repository.Namespace
 		pullObj.RepoName = dockerWebHook.Repository.RepoName
 		pullObj.Tag = dockerWebHook.PushData.Tag
-		pullObj.PushedDate = dockerWebHook.PushData.Pushed_at
+		pullObj.PushedDate = dockerWebHook.PushData.PushedAt
 
 		log.Println("web-hook trigger" + string(b))
 
 		imageName, responseCode, responseDesc, err = pullmanager.PullToDocker(pullObj)
 		log.Println("pull Manager responseCode :" + strconv.Itoa(responseCode) + " responseDesc : " + responseDesc)
-
 		c.String(http.StatusOK, "OK")
 	})
 }
