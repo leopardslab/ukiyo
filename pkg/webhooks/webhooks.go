@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"ukiyo/pkg/pullmanager"
+	//"ukiyo/pkg/pushmanager"
 	"ukiyo/pkg/util"
 
 	"github.com/gin-gonic/gin"
@@ -40,6 +42,10 @@ type DockerWebHook struct {
 	Repository  Repository `json:"repository"`
 }
 
+var responseCode int
+var responseDesc string
+var imageName string
+
 func HooksListener(r *gin.Engine) {
 	r.POST("/ukiyo-web-hook", func(c *gin.Context) {
 		var dockerWebHook DockerWebHook
@@ -57,9 +63,11 @@ func HooksListener(r *gin.Engine) {
 		pullObj.Tag = dockerWebHook.PushData.Tag
 		pullObj.PushedDate = dockerWebHook.PushData.Pushed_at
 
-		pullmanager.PullToDocker(pullObj)
+		log.Println("web-hook trigger" + string(b))
 
-		log.Println(string(b))
+		imageName, responseCode, responseDesc, err = pullmanager.PullToDocker(pullObj)
+		log.Println("pull Manager responseCode :" + strconv.Itoa(responseCode) + " responseDesc : " + responseDesc)
+
 		c.String(http.StatusOK, "OK")
 	})
 }
