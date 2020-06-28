@@ -31,16 +31,16 @@ Two modes of execution
 
 ## Dev Setup Guide
 
-### setup docker 
+### Setup docker 
 	 go mod init ukiyo
 	 go mod tidy
 
-### create docker binary file
+### Create docker binary file
 	set GOARCH=amd64
 	set GOOS=linux
 	go build -ldflags="-s -w" -o ukiyo main.go
 
-### docker build command
+### Docker build command
 	docker build -f Dockerfile -t agentukiyo/ukiyo .
 	
 	docker push agentukiyo/ukiyo
@@ -65,6 +65,5 @@ Two modes of execution
 		http:{serverIP}:8080/edit-container-token
 		{
 			"username":"agentukiyo",
-			"accessToken":"f44e334e-1440-4166-a16f-d8fc9d0eb188",
-			"email":"hansika.16@itfac.mrt.ac.lk",
+			"accessToken":"f44e334e-1440-4166-a16f-d8fc9d0eb188"
 		}
