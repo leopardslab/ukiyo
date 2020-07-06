@@ -41,7 +41,6 @@ Two modes of execution
 	go build -ldflags="-s -w" -o ukiyo main.go
 
 ### Docker build command
-	docker build -f Dockerfile -t agentukiyo/ukiyo .
 	
 	docker push agentukiyo/ukiyo
 
