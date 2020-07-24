@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"ukiyo/pkg/pullmanager"
+	"ukiyo/pkg/pushmanager"
 	"ukiyo/pkg/util"
 
 	"github.com/gin-gonic/gin"
@@ -66,6 +67,13 @@ func HooksListener(r *gin.Engine) {
 
 		imageName, responseCode, responseDesc, err = pullmanager.PullToDocker(pullObj)
 		log.Println("pull Manager responseCode :" + strconv.Itoa(responseCode) + " responseDesc : " + responseDesc)
+
+		_, err = pushmanager.ContainerCreate(imageName)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
 		c.String(http.StatusOK, "OK")
 	})
 }
