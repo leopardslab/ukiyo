@@ -26,7 +26,7 @@ func ContainerRunner(containerId string) (ResponseObj, error) {
 	if err != nil {
 		log.Println(err)
 		responseObj.ResponseCode = 1
-		responseObj.ResponseDesc = "Successfully Run failure :" + containerId
+		responseObj.ResponseDesc = "Container Run failure :" + containerId
 	} else {
 		responseObj.ResponseCode = 0
 		responseObj.ResponseDesc = "Successfully Run The Container :" + containerId

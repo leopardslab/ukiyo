@@ -47,12 +47,17 @@ $ go build -ldflags="-s -w" -o ukiyo main.go
 
 Docker build command
 ```sh
-$ docker build -f Dockerfile -t agentukiyo/ukiyo .
-$ docker push agentukiyo/ukiyo
+$ docker build -f Dockerfile -t agentukiyo/ukiyo:tag .
+$ docker push agentukiyo/ukiyo:tag
+```
+
+Run ukiyo agent
+```sh
 $ docker run -p 8080:8080 \
+     -- name ukiyo \
      -v /var/run/docker.sock:/var/run/docker.sock \
      -v /home/reinventor/dbs:/dbs \
-     agentukiyo/ukiyo
+     agentukiyo/ukiyo:01
 ```
 
 Add webhook to your dockerhub repository
@@ -62,18 +67,63 @@ http:{serverIP}:8080/ukiyo-web-hook
 
 Add your own docker registy details
 ```
-http:{serverIP}:8080/add-container
+http:{serverIP}:8080/save-container-access-keys
 {
-     "username":"agentukiyo",
-     "repoName":"Ukiyo Docker registry",
-     "accessToken":"f44e334e-1440-4166-a16f-d8fc9d0eb188",
-     "email":"hansika.16@itfac.mrt.ac.lk",
+     "username":"docker registry name"
+     "desc":"docker registry description"
+     "accessToken":"docker registry accesstoken"
+     "email":"your email"
      "serverAddress":"http://docker.io/v1"
 }
 
-http:{serverIP}:8080/edit-container-token
+http:{serverIP}:8080/edit-container-access-keys
 {
-     "username":"agentukiyo",
-     "accessToken":"f44e334e-1440-4166-a16f-d8fc9d0eb188"
+     "username":"docker registry name"
+     "desc":"edited description"
+     "accessToken":"new docker registry accesstoken"
+     "email":"new email"
+     "serverAddress":"http://docker.io/v1"
 }
+
+http://{serverIP}:8080/delete-container-access-keys/{registryname}
+```
+
+Add your deployment details
+```
+http://{serverIP}:8080/save-repository-scheduled-time
+{
+     "name": "repository name",
+     "bindingPort": 
+     [{
+        "exportPort": "8180",
+        "internalPort": "80"
+      },
+      {
+         "exportPort": "443",
+         "internalPort": "443"
+      }],
+      "scheduledAt": "1555438658",
+      "scheduledDowntime": false
+}
+        
+http://{serverIP}:8080/edit-repository-scheduled-time
+{
+     "name": "repository name",
+     "bindingPort": 
+     [{
+        "exportPort": "8180",
+        "internalPort": "80"
+     }],
+     "scheduledAt": "1555438658",
+     "scheduledDowntime": false
+}
+
+http://{serverIP}:8080/remove-repository-scheduled-time/{repositoryname}
+```
+
+List your deployment details   
+```
+http://{serverIP}:8080/get-container-history/1 
+        
+http://{serverIP}:8080/get-container-history-by-name/{repositoryname}
 ```

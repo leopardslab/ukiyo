@@ -9,8 +9,8 @@ import (
 
 func GetAllContainerHistory(r *gin.Engine) {
 	r.GET("/get-container-history/:pageNo", func(c *gin.Context) {
-		var response containerhistory.HistoryResponse
 		pageNo := c.Param("pageNo")
+		response := containerhistory.QueryAllHistoryRecodeInDB(pageNo)
 		log.Println("Container History details by pageNo=" + pageNo)
 		c.JSON(http.StatusOK, response)
 	})
