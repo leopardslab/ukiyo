@@ -6,3 +6,8 @@ type PullObj struct {
 	Tag        string
 	PushedDate int
 }
+
+type ResponseObj struct {
+	ResponseCode int
+	ResponseDesc string
+}

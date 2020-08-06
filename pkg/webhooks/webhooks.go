@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"ukiyo/pkg/pullmanager"
 	"ukiyo/pkg/util"
 
@@ -11,10 +12,10 @@ import (
 )
 
 type PushData struct {
-	Pushed_at int      `json:"pushed_at"`
-	images    []string `json:"images"`
-	Tag       string   `json:"tag"`
-	Pusher    string   `json:"pusher"`
+	PushedAt int      `json:"pushed_at"`
+	images   []string `json:"images"`
+	Tag      string   `json:"tag"`
+	Pusher   string   `json:"pusher"`
 }
 
 type Repository struct {
@@ -40,6 +41,10 @@ type DockerWebHook struct {
 	Repository  Repository `json:"repository"`
 }
 
+var responseCode int
+var responseDesc string
+var imageName string
+
 func HooksListener(r *gin.Engine) {
 	r.POST("/ukiyo-web-hook", func(c *gin.Context) {
 		var dockerWebHook DockerWebHook
@@ -55,11 +60,12 @@ func HooksListener(r *gin.Engine) {
 		pullObj.Namespace = dockerWebHook.Repository.Namespace
 		pullObj.RepoName = dockerWebHook.Repository.RepoName
 		pullObj.Tag = dockerWebHook.PushData.Tag
-		pullObj.PushedDate = dockerWebHook.PushData.Pushed_at
+		pullObj.PushedDate = dockerWebHook.PushData.PushedAt
 
-		pullmanager.PullToDocker(pullObj)
+		log.Println("web-hook trigger" + string(b))
 
-		log.Println(string(b))
+		imageName, responseCode, responseDesc, err = pullmanager.PullToDocker(pullObj)
+		log.Println("pull Manager responseCode :" + strconv.Itoa(responseCode) + " responseDesc : " + responseDesc)
 		c.String(http.StatusOK, "OK")
 	})
 }
