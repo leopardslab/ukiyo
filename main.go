@@ -5,7 +5,7 @@ import (
 	"ukiyo/api/historyapilayer"
 	"ukiyo/api/registryapilayer"
 	"ukiyo/api/schedulerapilayer"
-	"ukiyo/pkg/scheduler"
+	"ukiyo/internal/caching"
 	"ukiyo/pkg/webhook-listener"
 )
 
