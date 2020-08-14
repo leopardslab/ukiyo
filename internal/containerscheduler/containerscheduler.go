@@ -9,7 +9,7 @@ import (
 type PodsDetails struct {
 	Name              string        `json:"name"`
 	BindingPort       []BindingPort `json:"bindingPort"`
-	ScheduledAt       int           `json:"scheduledAt"`
+	ScheduledAt       int64         `json:"scheduledAt"`
 	ScheduledDowntime bool          `json:"scheduledDowntime"`
 }
 

@@ -13,3 +13,12 @@ func PrintJson(obj interface{}) string {
 	}
 	return string(b)
 }
+
+func PassJson(obj interface{}) []byte {
+	b, err := json.Marshal(obj)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return b
+}

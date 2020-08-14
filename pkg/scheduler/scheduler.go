@@ -2,21 +2,13 @@ package scheduler
 
 import (
 	"log"
-	"time"
+	"ukiyo/internal/caching"
 	"ukiyo/internal/containerscheduler"
 	"ukiyo/pkg/jencoder"
 	"ukiyo/pkg/manager/dockercreater"
 	"ukiyo/pkg/manager/dockerremove"
 	"ukiyo/pkg/manager/dockerrunner"
 )
-
-func ScheduledRunner() {
-	pods := containerscheduler.QueryListRecodeInDB()
-	log.Println("ScheduledRunner trigger ...." + jencoder.PrintJson(pods))
-	time.AfterFunc(1*time.Minute, func() {
-		Foo()
-	})
-}
 
 func WebHookScheduler(name string, imageName string) {
 	pod := containerscheduler.QueryRecodeInDB(name)
@@ -40,10 +32,7 @@ func WebHookScheduler(name string, imageName string) {
 			log.Println("Stop Container runner - WebHookScheduler - Failed Running Container remove process")
 		}
 	} else {
+		caching.CacheRunner(name, imageName, 0)
 		log.Println("No saved pod details to schedule images")
 	}
-}
-
-func Foo() {
-	log.Println("Foo run for more than a minute.")
 }
