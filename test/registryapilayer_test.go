@@ -49,7 +49,7 @@ func TestDeleteContainerAccessKeys(t *testing.T) {
 	r := gin.Default()
 	registryapilayer.DeleteContainerAccessKeys(r)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("DELETE", "/delete-container-access-keys/165090-yy", nil)
+	req, _ := http.NewRequest("DELETE", "/delete-container-access-keys/registryName", nil)
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, "OK", w.Body.String())

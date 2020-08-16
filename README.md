@@ -13,7 +13,6 @@
 - Container manager
 - Push manager (webhooks configuration) 
 - Scheduler 
-- OPTIONAL - Pull based update implementation
 
 ## Execution modes
 
@@ -75,7 +74,18 @@ http:{serverIP}:8080/save-container-access-keys
      "email":"your email"
      "serverAddress":"http://docker.io/v1"
 }
+```
+```sh
+curl -X POST  \
+-H "Accept: Application/json" \
+-H "Content-Type: application/json" http://{serverIP}:8080/save-container-access-keys \
+-d  '{"username":"docker registry name","desc":"docker registry description",
+"accessToken":"docker registry accesstoken","email":"your email",
+"serverAddress":"http://docker.io/v1"}'
+```
 
+Update your own docker registy details
+```
 http:{serverIP}:8080/edit-container-access-keys
 {
      "username":"docker registry name"
@@ -84,11 +94,27 @@ http:{serverIP}:8080/edit-container-access-keys
      "email":"new email"
      "serverAddress":"http://docker.io/v1"
 }
-
-http://{serverIP}:8080/delete-container-access-keys/{registryname}
+```
+```sh
+curl -X POST  \
+-H "Accept: Application/json" \
+-H "Content-Type: application/json" http://{serverIP}:8080/edit-container-access-keys \
+-d  '{"username":"docker registry name","desc":"docker registry description",
+"accessToken":"docker registry accesstoken","email":"your email",
+"serverAddress":"http://docker.io/v1"}'
 ```
 
-Add your deployment details
+Delete your docker registy details
+```
+http://{serverIP}:8080/delete-container-access-keys/{registryname}
+```
+```sh
+curl -X DELETE  \
+-H "Accept: Application/json" \
+-H "Content-Type: application/json" http://{serverIP}:8080/delete-container-access-keys/{registryname}
+```
+
+Add your deployment details and set schedule deployment time
 ```
 http://{serverIP}:8080/save-repository-scheduled-time
 {
@@ -105,7 +131,17 @@ http://{serverIP}:8080/save-repository-scheduled-time
       "scheduledAt": "1555438658",
       "scheduledDowntime": false
 }
-        
+```
+```sh
+curl -X POST  \
+-H "Accept: Application/json" \
+-H "Content-Type: application/json" http://{serverIP}:8080/save-repository-scheduled-time \
+-d  '{"name": "repository name","bindingPort": [{ "exportPort": "8180", "internalPort": "80" }, 
+{ "exportPort": "443", "internalPort": "443" }], "scheduledAt": 1555438658, "scheduledDowntime": false}'
+```
+
+Change the deployment schedule
+```
 http://{serverIP}:8080/edit-repository-scheduled-time
 {
      "name": "repository name",
@@ -117,8 +153,23 @@ http://{serverIP}:8080/edit-repository-scheduled-time
      "scheduledAt": "1555438658",
      "scheduledDowntime": false
 }
+```
+```sh
+curl -X POST  \
+-H "Accept: Application/json" \
+-H "Content-Type: application/json" http://{serverIP}:8080/edit-repository-scheduled-time \
+-d  '{"name": "repository name","bindingPort": [{ "exportPort": "8180", "internalPort": "80" }, 
+{ "exportPort": "443", "internalPort": "443" }], "scheduledAt": 1555438658, "scheduledDowntime": false}'
+```
 
+Delete your deployment details
+```
 http://{serverIP}:8080/remove-repository-scheduled-time/{repositoryname}
+```
+```sh
+curl -X DELETE  \
+-H "Accept: Application/json" \
+-H "Content-Type: application/json" http://{serverIP}:8080/remove-repository-scheduled-time/{repositoryname}
 ```
 
 List your deployment details   
