@@ -75,6 +75,7 @@ http:{serverIP}:8080/save-container-access-keys
      "serverAddress":"http://docker.io/v1"
 }
 ```
+
 ```sh
 curl -X POST  \
 -H "Accept: Application/json" \
@@ -95,6 +96,7 @@ http:{serverIP}:8080/edit-container-access-keys
      "serverAddress":"http://docker.io/v1"
 }
 ```
+
 ```sh
 curl -X POST  \
 -H "Accept: Application/json" \
@@ -108,6 +110,7 @@ Delete your docker registy details
 ```
 http://{serverIP}:8080/delete-container-access-keys/{registryname}
 ```
+
 ```sh
 curl -X DELETE  \
 -H "Accept: Application/json" \
@@ -128,16 +131,17 @@ http://{serverIP}:8080/save-repository-scheduled-time
          "exportPort": "443",
          "internalPort": "443"
       }],
-      "scheduledAt": "1555438658",
+      "scheduledTime": "Aug 17 2020 00:40:50 AM",
       "scheduledDowntime": false
 }
 ```
+
 ```sh
 curl -X POST  \
 -H "Accept: Application/json" \
 -H "Content-Type: application/json" http://{serverIP}:8080/save-repository-scheduled-time \
 -d  '{"name": "repository name","bindingPort": [{ "exportPort": "8180", "internalPort": "80" }, 
-{ "exportPort": "443", "internalPort": "443" }], "scheduledAt": 1555438658, "scheduledDowntime": false}'
+{ "exportPort": "443", "internalPort": "443" }], "scheduledTime": "Aug 17 2020 00:40:50 AM", "scheduledDowntime": false}'
 ```
 
 Change the deployment schedule
@@ -150,31 +154,26 @@ http://{serverIP}:8080/edit-repository-scheduled-time
         "exportPort": "8180",
         "internalPort": "80"
      }],
-     "scheduledAt": "1555438658",
+     "scheduledTime": "Aug 17 2020 00:40:50 AM",
      "scheduledDowntime": false
 }
 ```
+
 ```sh
 curl -X POST  \
 -H "Accept: Application/json" \
 -H "Content-Type: application/json" http://{serverIP}:8080/edit-repository-scheduled-time \
--d  '{"name": "repository name","bindingPort": [{ "exportPort": "8180", "internalPort": "80" }, 
-{ "exportPort": "443", "internalPort": "443" }], "scheduledAt": 1555438658, "scheduledDowntime": false}'
+-d  '{"name": "repository name","bindingPort": [{ "exportPort": "8180", "internalPort": "80" }, { "exportPort": "443", "internalPort": "443" }], "scheduledTime": "Aug 17 2020 00:40:50 AM", "scheduledDowntime": true}'
 ```
 
 Delete your deployment details
 ```
 http://{serverIP}:8080/remove-repository-scheduled-time/{repositoryname}
 ```
+
 ```sh
 curl -X DELETE  \
 -H "Accept: Application/json" \
 -H "Content-Type: application/json" http://{serverIP}:8080/remove-repository-scheduled-time/{repositoryname}
 ```
 
-List your deployment details   
-```
-http://{serverIP}:8080/get-container-history/1 
-        
-http://{serverIP}:8080/get-container-history-by-name/{repositoryname}
-```
