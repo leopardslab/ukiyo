@@ -28,6 +28,13 @@ const (
 )
 
 var val int
+var buildTimeMilSec int64
+var buildTimeMnt int64
+
+type CashObj struct {
+	ImageName   string `json:"imageName"`
+	ScheduledAt int64  `json:"scheduledAt"`
+}
 
 func (c PodsDetails) ID() (jsonField string, value interface{}) {
 	value = c.Name
@@ -36,7 +43,14 @@ func (c PodsDetails) ID() (jsonField string, value interface{}) {
 }
 
 func GetBindingPortsForContainerCreate(name string) []string {
-	return []string{"8180:80", "443:443"}
+	var data []string
+	pod := QueryRecodeInDB(name)
+	if len(pod.BindingPort) > 0 {
+		for _, port := range pod.BindingPort {
+			data = append(data, port.ExportPort+":"+port.InternalPort)
+		}
+	}
+	return data
 }
 
 func InsertPodsData(podsDetails PodsDetails) ResponseObj {
@@ -66,6 +80,7 @@ func UpdatePodsData(podsDetails PodsDetails) ResponseObj {
 	if len(pod.Name) != 0 {
 		pod.BindingPort = podsDetails.BindingPort
 		pod.ScheduledAt = podsDetails.ScheduledAt
+		pod.ScheduledDowntime = podsDetails.ScheduledDowntime
 		responseObj = UpdateDb(pod)
 	} else {
 		responseObj.ResponseCode = 1
