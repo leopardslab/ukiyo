@@ -1,14 +1,14 @@
 package webhook_listener
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/patrickmn/go-cache"
 	"log"
 	"net/http"
 	"ukiyo/pkg/jencoder"
 	"ukiyo/pkg/manager/dockerpull"
 	"ukiyo/pkg/scheduler"
 	"ukiyo/pkg/webhook"
-
-	"github.com/gin-gonic/gin"
 )
 
 type PushData struct {
@@ -41,7 +41,7 @@ type DockerWebHook struct {
 	Repository  Repository `json:"repository"`
 }
 
-func HooksListener(r *gin.Engine) {
+func HooksListener(r *gin.Engine, cash *cache.Cache) {
 	r.POST("/ukiyo-web-hook", func(c *gin.Context) {
 		log.Println("Starting web hook trigger .... ############################")
 		var dockerWebHook DockerWebHook
@@ -58,7 +58,7 @@ func HooksListener(r *gin.Engine) {
 
 		if len(resObj.Name) > 0 {
 			log.Println("Trigger for check the Scheduler ....")
-			scheduler.WebHookScheduler(resObj.Name, resObj.ImageName)
+			scheduler.WebHookScheduler(resObj.Name, resObj.ImageName, cash)
 		} else {
 			log.Println("Error Creating Image ....")
 		}
