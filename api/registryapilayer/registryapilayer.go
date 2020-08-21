@@ -13,7 +13,7 @@ func SaveContainerAccessKeys(r *gin.Engine) {
 		var containerKey containeraccess.ContainerKeys
 		var responseObj containeraccess.ResponseObj
 		c.ShouldBindJSON(&containerKey)
-		log.Println("Container keys save details" + jencoder.PrintJson(containerKey))
+		log.Println("save-container-access-keys | request : " + jencoder.PrintJson(containerKey))
 
 		if len(containerKey.UserName) > 0 && len(containerKey.AccessToken) > 0 && len(containerKey.ServerAddress) > 0 {
 			res := containeraccess.InsertDockerRegData(containerKey)
@@ -22,6 +22,7 @@ func SaveContainerAccessKeys(r *gin.Engine) {
 			responseObj.ResponseCode = 1
 			responseObj.ResponseDesc = "Invalid Parameter"
 		}
+		log.Println("save-container-access-keys | response : " + jencoder.PrintJson(responseObj))
 		c.JSON(http.StatusOK, responseObj)
 	})
 }
@@ -31,7 +32,7 @@ func EditContainerAccessKeys(r *gin.Engine) {
 		var containerKey containeraccess.ContainerKeys
 		var responseObj containeraccess.ResponseObj
 		c.ShouldBindJSON(&containerKey)
-		log.Println("Container keys Update details" + jencoder.PrintJson(containerKey))
+		log.Println("edit-container-access-keys | request : " + jencoder.PrintJson(containerKey))
 
 		if len(containerKey.UserName) > 0 && len(containerKey.AccessToken) > 0 {
 			res := containeraccess.UpdateDockerRegData(containerKey)
@@ -40,6 +41,7 @@ func EditContainerAccessKeys(r *gin.Engine) {
 			responseObj.ResponseCode = 1
 			responseObj.ResponseDesc = "Invalid Parameter"
 		}
+		log.Println("edit-container-access-keys | response :" + jencoder.PrintJson(responseObj))
 		c.JSON(http.StatusOK, responseObj)
 	})
 }
@@ -48,7 +50,7 @@ func DeleteContainerAccessKeys(r *gin.Engine) {
 	r.DELETE("/delete-container-access-keys/:userName", func(c *gin.Context) {
 		var responseObj containeraccess.ResponseObj
 		name := c.Param("userName")
-		log.Println("Container keys Delete details userName=" + name)
+		log.Println("delete-container-access-keys | request : userName=" + name)
 		if len(name) > 0 {
 			res := containeraccess.DeleteDockerRegData(name)
 			responseObj = res
@@ -56,6 +58,7 @@ func DeleteContainerAccessKeys(r *gin.Engine) {
 			responseObj.ResponseCode = 1
 			responseObj.ResponseDesc = "Invalid Parameter"
 		}
+		log.Println("delete-container-access-keys | response : " + jencoder.PrintJson(responseObj))
 		c.JSON(http.StatusOK, responseObj)
 	})
 }

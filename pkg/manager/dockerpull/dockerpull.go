@@ -5,7 +5,6 @@ import (
 	"log"
 	"strings"
 	"ukiyo/internal/containeraccess"
-	"ukiyo/internal/containerhistory"
 	"ukiyo/pkg/jencoder"
 	"ukiyo/pkg/webhook"
 )
@@ -16,10 +15,6 @@ type ResponseObj struct {
 	ResponseCode int
 	ResponseDesc string
 }
-
-const (
-	_eventTypeImagePuller = "Pull Image Event"
-)
 
 var val int
 var ImageName string
@@ -68,15 +63,6 @@ func PullToDocker(str webhook.Response) (ResponseObj, error) {
 		responseObj.ResponseCode = 0
 		responseObj.ResponseDesc = "Failed pull the images"
 	}
-
-	var data containerhistory.Data
-	data.EventType = _eventTypeImagePuller
-	data.EventObject.EventCode = responseObj.ResponseCode
-	data.EventObject.EventDesc = responseObj.ResponseDesc
-	data.EventObject.EventAt = 11111111
-	data.EventData.ImagePuller.Name = str.Name
-	data.EventData.ImagePuller.ImageName = ImageName
-	containerhistory.UpdateContainerHistory(str.Name, data)
 
 	return responseObj, err
 }
