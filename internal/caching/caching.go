@@ -56,7 +56,7 @@ func ContainerRunFunc(name string, scheduledAt int64, c *cache.Cache) {
 			}
 			if len(cashObj.ImageName) > 0 {
 				log.Println("Starting to create scheduled container : " + cashObj.ImageName)
-				scheduler.DeploymentProcess(name, cashObj.ImageName)
+				scheduler.DeploymentProcess(name, cashObj.ImageName, c)
 			} else {
 				log.Println("Failed to create scheduled container, No image in cache : null")
 			}
