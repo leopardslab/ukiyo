@@ -16,7 +16,7 @@ func WebHookScheduler(name string, imageName string, c *cache.Cache) {
 	log.Println("WebHookScheduler " + jencoder.PrintJson(pod))
 	if len(pod.Name) > 0 && !pod.ScheduledDowntime {
 		log.Println("Starting Non scheduled deployment")
-		DeploymentProcess(name, imageName)
+		DeploymentProcess(name, imageName, c)
 	} else if len(pod.Name) > 0 && pod.ScheduledDowntime {
 		log.Println("Starting scheduled deployment")
 		cacheupdate.CacheUpdate(name, imageName, c)
@@ -25,19 +25,18 @@ func WebHookScheduler(name string, imageName string, c *cache.Cache) {
 	}
 }
 
-func DeploymentProcess(name string, imageName string) {
-	log.Println("Starting Container Remove - WebHookScheduler")
-	removeObj, _ := dockerremove.RemoveRunningContainer(name)
+func DeploymentProcess(name string, imageName string, c *cache.Cache) {
+	removeObj, _ := dockerremove.RemoveRunningContainer(name, c)
 	log.Println("Ending Container Remove - WebHookScheduler ...." + jencoder.PrintJson(removeObj))
 
 	if removeObj.ResponseCode == 0 {
 
 		log.Println("WebHookScheduler trigger ContainerCreate...." + jencoder.PrintJson(name))
-		res, _ := dockercreater.ContainerCreate(name, imageName)
+		res, _ := dockercreater.ContainerCreate(name, imageName, c)
 		log.Println("WebHookScheduler trigger ContainerCreate...." + jencoder.PrintJson(res))
 
 		log.Println("Starting Container runner - WebHookScheduler")
-		resObj, _ := dockerrunner.ContainerRunner(res.ContainerId)
+		resObj, _ := dockerrunner.ContainerRunner(res.ContainerId, c)
 		log.Println("Ending Container runner - WebHookScheduler ...." + jencoder.PrintJson(resObj))
 
 	} else {

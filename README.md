@@ -141,7 +141,8 @@ curl -X POST  \
 -H "Accept: Application/json" \
 -H "Content-Type: application/json" http://{serverIP}:8080/save-repository-scheduled-time \
 -d  '{"name": "repository name","bindingPort": [{ "exportPort": "8180", "internalPort": "80" }, 
-{ "exportPort": "443", "internalPort": "443" }], "scheduledTime": "Aug 17 2020 00:40:50 AM", "scheduledDowntime": false}'
+{ "exportPort": "443", "internalPort": "443" }], 
+"scheduledTime": "Aug 17 2020 00:40:50 AM", "scheduledDowntime": false}'
 ```
 
 Change the deployment schedule
@@ -163,7 +164,9 @@ http://{serverIP}:8080/edit-repository-scheduled-time
 curl -X POST  \
 -H "Accept: Application/json" \
 -H "Content-Type: application/json" http://{serverIP}:8080/edit-repository-scheduled-time \
--d  '{"name": "repository name","bindingPort": [{ "exportPort": "8180", "internalPort": "80" }, { "exportPort": "443", "internalPort": "443" }], "scheduledTime": "Aug 17 2020 00:40:50 AM", "scheduledDowntime": true}'
+-d  '{"name": "repository name","bindingPort": [{ "exportPort": "8180", "internalPort": "80" }, 
+{ "exportPort": "443", "internalPort": "443" }], 
+"scheduledTime": "Aug 17 2020 00:40:50 AM", "scheduledDowntime": true}'
 ```
 
 Delete your deployment details

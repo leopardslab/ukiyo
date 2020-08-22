@@ -32,7 +32,7 @@ func SaveRepositoryScheduledTime(r *gin.Engine, cache *cache.Cache) {
 		log.Println("save-repository-scheduled-time | request : " + jencoder.PrintJson(podsDetailsObj))
 
 		loc, _ := time.LoadLocation(_TimeZone)
-		if len(podsDetailsObj.Name) > 0 && util.BindPortValidator(podsDetailsObj.BindingPort) {
+		if len(podsDetailsObj.Name) > 0 && util.BindPortValidator(podsDetailsObj.BindingPort, "") {
 			podsDetails, status := RequestDateConverter(podsDetailsObj)
 			if podsDetails.ScheduledDowntime && status == 0 {
 				if ((podsDetails.ScheduledAt - time.Now().In(loc).UnixNano()/int64(time.Millisecond)) / 60000) >= 5 {
@@ -68,7 +68,7 @@ func EditRepositoryScheduledTime(r *gin.Engine, cache *cache.Cache) {
 		c.ShouldBindJSON(&podsDetailsObj)
 		log.Println("edit-repository-scheduled-time | request : " + jencoder.PrintJson(podsDetailsObj))
 
-		if len(podsDetailsObj.Name) > 0 && util.BindPortValidator(podsDetailsObj.BindingPort) {
+		if len(podsDetailsObj.Name) > 0 && util.BindPortValidator(podsDetailsObj.BindingPort, podsDetailsObj.Name) {
 			podsDetails, status := RequestDateConverter(podsDetailsObj)
 			loc, _ := time.LoadLocation(_TimeZone)
 			if podsDetails.ScheduledDowntime && status == 0 {

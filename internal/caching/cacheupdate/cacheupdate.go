@@ -9,14 +9,21 @@ import (
 	"ukiyo/pkg/jencoder"
 )
 
+const (
+	_TimeZone = "Asia/Kolkata"
+)
+
 type CashObj struct {
 	ImageName   string `json:"imageName"`
 	ScheduledAt int64  `json:"scheduledAt"`
 }
 
-const (
-	_TimeZone = "Asia/Kolkata"
-)
+type History struct {
+	Time    string
+	Action  string
+	Status  int
+	Comment string
+}
 
 var val int
 var mnt int
@@ -35,7 +42,7 @@ func CacheUpdate(name string, imageName string, c *cache.Cache) {
 	}
 }
 
-func TimeCalculator(name string, c *cache.Cache) (string, string, string) {
+func TimeCalculator(name string, c *cache.Cache) (int, int, string) {
 	var cashObj CashObj
 	loc, _ := time.LoadLocation(_TimeZone)
 	if x, _, found := c.GetWithExpiration(name); found {
@@ -51,11 +58,37 @@ func TimeCalculator(name string, c *cache.Cache) (string, string, string) {
 			} else {
 				imageName = "waiting"
 			}
-			return strconv.Itoa(mnt), strconv.Itoa((val - mnt*60000) / 1000), imageName
+			return mnt, (val - mnt*60000) / 1000, imageName
 		} else {
-			return "-", "-", "-"
+			return 0, 0, "-"
 		}
 	} else {
-		return "-", "-", "-"
+		return 0, 0, "-"
 	}
+}
+
+func HistoryFetch(c *cache.Cache) [][]string {
+	var historyArr []History
+	var historyData [][]string
+	if x, _, found := c.GetWithExpiration("history"); found {
+		err := json.Unmarshal(jencoder.PassJson(x), &historyArr)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	if len(historyArr) > 10 {
+		for x := 0; x < (len(historyArr) - 10); x++ {
+			historyArr = RemoveIndex(historyArr, 8)
+		}
+	}
+	if len(historyArr) > 0 {
+		for _, histor := range historyArr {
+			historyData = append(historyData, []string{histor.Time, histor.Action, strconv.Itoa(histor.Status), histor.Comment})
+		}
+	}
+	return historyData
+}
+
+func RemoveIndex(s []History, index int) []History {
+	return append(s[:index], s[index+1:]...)
 }

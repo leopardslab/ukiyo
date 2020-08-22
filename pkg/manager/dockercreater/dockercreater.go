@@ -1,10 +1,14 @@
 package dockercreater
 
 import (
+	"encoding/json"
 	docker "github.com/fsouza/go-dockerclient"
+	"github.com/patrickmn/go-cache"
 	"log"
 	"strings"
+	"time"
 	"ukiyo/internal/containerscheduler"
+	"ukiyo/pkg/jencoder"
 )
 
 type ResponseObj struct {
@@ -14,7 +18,18 @@ type ResponseObj struct {
 	ResponseDesc string
 }
 
-func ContainerCreate(name string, imageName string) (ResponseObj, error) {
+type History struct {
+	Time    string
+	Action  string
+	Status  int
+	Comment string
+}
+
+const (
+	_TimeZone = "Asia/Kolkata"
+)
+
+func ContainerCreate(name string, imageName string, c *cache.Cache) (ResponseObj, error) {
 	var responseObj ResponseObj
 	client, err := docker.NewClientFromEnv()
 	if err != nil {
@@ -62,5 +77,26 @@ func ContainerCreate(name string, imageName string) (ResponseObj, error) {
 	responseObj.ResponseCode = 0
 	responseObj.ContainerId = container.ID
 	responseObj.ResponseDesc = "Successfully Create The Container :" + name
+	SetHistory(responseObj, c)
 	return responseObj, err
+}
+
+func SetHistory(obj ResponseObj, cash *cache.Cache) {
+	var historyArray []History
+	var history History
+	loc, _ := time.LoadLocation(_TimeZone)
+	history.Time = time.Now().In(loc).Format("2006-01-02 15:04:05")
+	history.Status = obj.ResponseCode
+	history.Action = obj.ResponseDesc
+	history.Comment = obj.ResponseDesc
+
+	if x, _, found := cash.GetWithExpiration("history"); found {
+		err := json.Unmarshal(jencoder.PassJson(x), &historyArray)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	historyArray = append(historyArray, history)
+	cash.Set("history", historyArray, 5*time.Minute)
 }

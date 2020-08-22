@@ -43,24 +43,19 @@ type DockerWebHook struct {
 
 func HooksListener(r *gin.Engine, cash *cache.Cache) {
 	r.POST("/ukiyo-web-hook", func(c *gin.Context) {
-		log.Println("Starting web hook trigger .... ############################")
 		var dockerWebHook DockerWebHook
 		c.ShouldBindJSON(&dockerWebHook)
-		log.Println("web-hook trigger" + jencoder.PrintJson(dockerWebHook))
+		log.Println("ukiyo web-hook trigger request" + jencoder.PrintJson(dockerWebHook))
 
 		res := SetWebHookResponse(dockerWebHook)
-		log.Println("Ending web hook trigger ...." + jencoder.PrintJson(res))
+		log.Println("ukiyo web-hook trigger response" + jencoder.PrintJson(res))
 
-		log.Println("Starting Image Pull .... ############################")
-		resObj, err := dockerpull.PullToDocker(res)
-		log.Println(err)
-		log.Println("Ending Image Pull ...." + jencoder.PrintJson(resObj))
+		resObj, _ := dockerpull.PullToDocker(res, cash)
 
 		if len(resObj.Name) > 0 {
-			log.Println("Trigger for check the Scheduler ....")
 			scheduler.WebHookScheduler(resObj.Name, resObj.ImageName, cash)
 		} else {
-			log.Println("Error Creating Image ....")
+			log.Println("Error Creating Image .." + jencoder.PrintJson(resObj))
 		}
 
 		c.String(http.StatusOK, "OK")
