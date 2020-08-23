@@ -1,19 +1,21 @@
 package test
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/patrickmn/go-cache"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 	"ukiyo/api/schedulerapilayer"
-
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSaveRepositoryScheduledTime(t *testing.T) {
 	r := gin.Default()
-	schedulerapilayer.SaveRepositoryScheduledTime(r)
+	c := cache.New(1*time.Minute, 1*time.Minute)
+	schedulerapilayer.SaveRepositoryScheduledTime(r, c)
 	pushJson := `{
 				"name": "demo-nginx",
 				"bindingPort": [{
