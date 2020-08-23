@@ -42,14 +42,16 @@ $ docker build -f Dockerfile -t agentukiyo/ukiyo:tag .
 $ docker push agentukiyo/ukiyo:tag
 ```
 
-Run ukiyo agent
+The ukiyo-agent is available at https://hub.docker.com/r/agentukiyo/ukiyo
+
+Run ukiyo-agent
 ```sh
 $ docker run -d \
      -p 8080:8080 \
      -- name ukiyo \
      -v /var/run/docker.sock:/var/run/docker.sock \
-     -v /home/reinventor/dbs:/dbs \
-     agentukiyo/ukiyo:01
+     -v /home/ukiyo/dbs:/dbs \
+     agentukiyo/ukiyo:tag
 ```
 
 Add webhook to your dockerhub repository
