@@ -174,4 +174,3 @@ curl -X DELETE  \
 -H "Accept: Application/json" \
 -H "Content-Type: application/json" http://{serverIP}:8080/remove-repository-scheduled-time/{repositoryname}
 ```
-
