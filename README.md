@@ -52,7 +52,8 @@ $ docker push agentukiyo/ukiyo:tag
 
 Run ukiyo agent
 ```sh
-$ docker run -p 8080:8080 \
+$ docker run -d \
+     -p 8080:8080 \
      -- name ukiyo \
      -v /var/run/docker.sock:/var/run/docker.sock \
      -v /home/reinventor/dbs:/dbs \
