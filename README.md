@@ -58,6 +58,7 @@ Add webhook to your dockerhub repository
 ```
 http:{serverIP}:8080/ukiyo-web-hook
 ```
+For pull the containers, require the save Docker Hub authentications inside the ukiyo agent. Therefore you need to use curl or postman request to save the Docker keys.
 
 Add your own docker registy details
 ```
@@ -111,6 +112,8 @@ curl -X DELETE  \
 -H "Accept: Application/json" \
 -H "Content-Type: application/json" http://{serverIP}:8080/delete-container-access-keys/{registryname}
 ```
+
+Ukiyo will do the deployment in order to configured deployment details. Using save-repository-scheduled-time API you can apply the deployment on the fly or scheduled time
 
 Add your deployment details and set schedule deployment time
 ```
