@@ -1,6 +1,7 @@
 package schedulerapilayer
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
 	"log"
@@ -11,6 +12,13 @@ import (
 	"ukiyo/pkg/jencoder"
 	"ukiyo/pkg/scheduler/eventsheduler"
 )
+
+type History struct {
+	Time    string
+	Action  string
+	Status  int
+	Comment string
+}
 
 const (
 	_TimeZone = "Asia/Kolkata"
@@ -50,13 +58,14 @@ func SaveRepositoryScheduledTime(r *gin.Engine, cache *cache.Cache) {
 				responseObj = res
 			} else {
 				responseObj.ResponseCode = 1
-				responseObj.ResponseDesc = "Invalid Parameter"
+				responseObj.ResponseDesc = "Invalid Parameter : save-repository"
 			}
 		} else {
 			responseObj.ResponseCode = 1
-			responseObj.ResponseDesc = "Invalid Parameter"
+			responseObj.ResponseDesc = "Invalid Parameter : save-repository"
 		}
 		log.Println("save-repository-scheduled-time | response : " + jencoder.PrintJson(responseObj))
+		SetHistory(responseObj, cache, "save-repository")
 		c.JSON(http.StatusOK, responseObj)
 	})
 }
@@ -91,13 +100,14 @@ func EditRepositoryScheduledTime(r *gin.Engine, cache *cache.Cache) {
 				responseObj = res
 			} else {
 				responseObj.ResponseCode = 1
-				responseObj.ResponseDesc = "Invalid Parameter."
+				responseObj.ResponseDesc = "Invalid Parameter : edit-repository"
 			}
 		} else {
 			responseObj.ResponseCode = 1
-			responseObj.ResponseDesc = "Invalid Parameter"
+			responseObj.ResponseDesc = "Invalid Parameter : edit-repository"
 		}
 		log.Println("edit-repository-scheduled-time | response : " + jencoder.PrintJson(responseObj))
+		SetHistory(responseObj, cache, "edit-repository")
 		c.JSON(http.StatusOK, responseObj)
 	})
 }
@@ -115,9 +125,10 @@ func DeleteRepositoryScheduledTime(r *gin.Engine, cache *cache.Cache) {
 			responseObj = res
 		} else {
 			responseObj.ResponseCode = 1
-			responseObj.ResponseDesc = "Invalid Parameter"
+			responseObj.ResponseDesc = "Invalid Parameter : remove-repository"
 		}
 		log.Println("remove-repository-scheduled-time | response : " + jencoder.PrintJson(responseObj))
+		SetHistory(responseObj, cache, "remove-repository")
 		c.JSON(http.StatusOK, responseObj)
 	})
 }
@@ -135,4 +146,24 @@ func RequestDateConverter(podsDetailsObj PodsDetailsObj) (containerscheduler.Pod
 	}
 	podsDetails.ScheduledAt = time.Time(time1).In(loc).UnixNano() / int64(time.Millisecond)
 	return podsDetails, 0
+}
+
+func SetHistory(obj containerscheduler.ResponseObj, cash *cache.Cache, desc string) {
+	var historyArray []History
+	var history History
+	loc, _ := time.LoadLocation(_TimeZone)
+	history.Time = time.Now().In(loc).Format("2006-01-02 15:04:05")
+	history.Status = obj.ResponseCode
+	history.Action = obj.ResponseDesc
+	history.Comment = desc
+
+	if x, _, found := cash.GetWithExpiration("history"); found {
+		err := json.Unmarshal(jencoder.PassJson(x), &historyArray)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	historyArray = append(historyArray, history)
+	cash.Set("history", historyArray, 5*time.Minute)
 }

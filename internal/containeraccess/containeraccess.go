@@ -55,12 +55,11 @@ func InsertDockerRegData(containerKeys ContainerKeys) ResponseObj {
 			if strings.EqualFold(registry.UserName, containerKeys.UserName) {
 				val++
 				responseObj.ResponseCode = 1
-				responseObj.ResponseDesc = "Already Exist"
-				log.Println("Already Exist The Registry : " + registry.UserName)
+				responseObj.ResponseDesc = "Already Exist Container key :" + containerKeys.UserName
+				log.Println("Already Exist The Container key: " + registry.UserName)
 			}
 		}
 	}
-	log.Println(val)
 	if val == 0 {
 		responseObj = InsertDb(containerKeys)
 	}
@@ -82,7 +81,7 @@ func UpdateDockerRegData(containerKeys ContainerKeys) ResponseObj {
 		responseObj = UpdateDb(registries)
 	} else {
 		responseObj.ResponseCode = 1
-		responseObj.ResponseDesc = "Update Failed."
+		responseObj.ResponseDesc = "Update Failed Container Key :" + containerKeys.UserName
 	}
 
 	return responseObj
@@ -97,7 +96,7 @@ func DeleteDockerRegData(userName string) ResponseObj {
 		responseObj = DeleteDb(registries)
 	} else {
 		responseObj.ResponseCode = 1
-		responseObj.ResponseDesc = "Delete Failed."
+		responseObj.ResponseDesc = "Delete Failed Container key :" + userName
 	}
 	return responseObj
 }
@@ -127,11 +126,11 @@ func InsertDb(containerKeys ContainerKeys) ResponseObj {
 	err := dbconfig.DbConfig().Insert(containerKeys)
 	if err != nil {
 		responseObj.ResponseCode = 1
-		responseObj.ResponseDesc = "Insert Failed"
+		responseObj.ResponseDesc = "Insert Failed Container key : " + containerKeys.UserName
 		log.Println(err)
 	} else {
 		responseObj.ResponseCode = 0
-		responseObj.ResponseDesc = "Successfully Added"
+		responseObj.ResponseDesc = "Successfully Added Container Key :" + containerKeys.UserName
 	}
 	return responseObj
 }
@@ -141,11 +140,11 @@ func UpdateDb(containerKeys ContainerKeys) ResponseObj {
 	err := dbconfig.DbConfig().Update(containerKeys)
 	if err != nil {
 		responseObj.ResponseCode = 1
-		responseObj.ResponseDesc = "Update Failed"
+		responseObj.ResponseDesc = "Update Failed Container key :" + containerKeys.UserName
 		log.Println(err)
 	} else {
 		responseObj.ResponseCode = 0
-		responseObj.ResponseDesc = "Successfully Updated"
+		responseObj.ResponseDesc = "Successfully Updated Container key :" + containerKeys.UserName
 	}
 	return responseObj
 }
@@ -155,11 +154,11 @@ func DeleteDb(containerKeys ContainerKeys) ResponseObj {
 	err := dbconfig.DbConfig().Delete(containerKeys)
 	if err != nil {
 		responseObj.ResponseCode = 1
-		responseObj.ResponseDesc = "Delete Failed"
+		responseObj.ResponseDesc = "Delete Failed Container Key :" + containerKeys.UserName
 		log.Println(err)
 	} else {
 		responseObj.ResponseCode = 0
-		responseObj.ResponseDesc = "Successfully Deleted"
+		responseObj.ResponseDesc = "Successfully Deleted Container Key :" + containerKeys.UserName
 	}
 	return responseObj
 }
