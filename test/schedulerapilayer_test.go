@@ -26,41 +26,43 @@ func TestSaveRepositoryScheduledTime(t *testing.T) {
 					"exportPort": "443",
 					"internalPort": "443"
 					}],
-				"scheduledAt": "1555438658",
+				"scheduledTime": "Aug 17 2020 00:19:50 AM",
 				"scheduledDowntime": false
 				}`
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/save-repository-scheduled-time", strings.NewReader(pushJson))
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "OK", w.Body.String())
+	assert.Equal(t, "{\"ResponseCode\":0,\"ResponseDesc\":\"Successfully Added pod details\"}", w.Body.String())
 }
 
 func TestEditRepositoryScheduledTime(t *testing.T) {
 	r := gin.Default()
-	schedulerapilayer.EditRepositoryScheduledTime(r)
+	c := cache.New(1*time.Minute, 1*time.Minute)
+	schedulerapilayer.EditRepositoryScheduledTime(r, c)
 	pushJson := `{
 				"name": "demo-nginx",
 				"bindingPort": [{
 					"exportPort": "8180",
 					"internalPort": "80"
 					}],
-				"scheduledAt": "1555438658",
+				"scheduledTime": "Aug 17 2020 00:19:50 AM",
 				"scheduledDowntime": false
 				}`
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/edit-repository-scheduled-time", strings.NewReader(pushJson))
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "OK", w.Body.String())
+	assert.Equal(t, "{\"ResponseCode\":0,\"ResponseDesc\":\"Successfully Updated pod details\"}", w.Body.String())
 }
 
 func TestDeleteRepositoryScheduledTime(t *testing.T) {
 	r := gin.Default()
-	schedulerapilayer.DeleteRepositoryScheduledTime(r)
+	c := cache.New(1*time.Minute, 1*time.Minute)
+	schedulerapilayer.DeleteRepositoryScheduledTime(r, c)
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/remove-repository-scheduled-time/demo-nginx", nil)
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "OK", w.Body.String())
+	assert.Equal(t, "{\"ResponseCode\":0,\"ResponseDesc\":\"Successfully Deleted pod details\"}", w.Body.String())
 }
